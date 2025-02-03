@@ -1,0 +1,24 @@
+<h1>Admin Dashboard</h1>
+<%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete } %>
+
+
+<h2>Buyers List</h2>
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Actions</th>
+  </tr>
+  <% @buyers.each do |buyer| %>
+    <tr>
+      <td><%= buyer.name %></td>
+      <td><%= buyer.email %></td>
+      <td><%= link_to 'Delete', admin_buyer_path(buyer),
+     data: { 
+        turbo_method: :delete,
+        turbo_confirm: "Are you sure you want to delete this buyer?"}
+        %></td>
+    </tr>
+  <% end %>
+</table>
+<a href="<%= new_admin_buyer_path %>">Add Buyer</a>
