@@ -1,24 +1,37 @@
-<h1>Admin Dashboard</h1>
-<%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete } %>
+<div class="container mt-5">
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <h1 class="fw-bold">Admin Dashboard</h1>
+    <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-danger" %>
+  </div>
 
+  <div class="card shadow p-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <h2 class="mb-3">Buyers List</h2>
+      <%= link_to 'Add Buyer', new_admin_buyer_path, class: "btn btn-success" %>
+    </div>
 
-<h2>Buyers List</h2>
-<table>
-  <tr>
-    <th>Name</th>
-    <th>Email</th>
-    <th>Actions</th>
-  </tr>
-  <% @buyers.each do |buyer| %>
-    <tr>
-      <td><%= buyer.name %></td>
-      <td><%= buyer.email %></td>
-      <td><%= link_to 'Delete', admin_buyer_path(buyer),
-     data: { 
-        turbo_method: :delete,
-        turbo_confirm: "Are you sure you want to delete this buyer?"}
-        %></td>
-    </tr>
-  <% end %>
-</table>
-<a href="<%= new_admin_buyer_path %>">Add Buyer</a>
+    <table class="table table-striped table-hover">
+      <thead class="table-dark">
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @buyers.each do |buyer| %>
+          <tr>
+            <td><%= buyer.name %></td>
+            <td><%= buyer.email %></td>
+            <td>
+              <%= link_to 'Delete', admin_buyer_path(buyer), 
+                class: "btn btn-sm btn-danger",
+                data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this buyer?" } 
+              %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

@@ -1,16 +1,27 @@
-<h1>Add Buyer</h1>
-<%= form_with model: @buyer, url: admin_buyers_path do |f| %>
-  <p>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :email %>
-    <%= f.email_field :email %>
-  </p>
-  <p>
-    <%= f.label :password %>
-    <%= f.password_field :password %>
-  </p>
-  <%= f.submit "Create Buyer" %>
-<% end %>
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h1 class="fw-bold text-center mb-4">Add Buyer</h1>
+    
+    <%= form_with model: @buyer, url: admin_buyers_path, class: "needs-validation", novalidate: true do |f| %>
+      <div class="mb-3">
+        <%= f.label :name, class: "form-label" %>
+        <%= f.text_field :name, class: "form-control", required: true, placeholder: "Enter buyer's name" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :email, class: "form-label" %>
+        <%= f.email_field :email, class: "form-control", required: true, placeholder: "Enter buyer's email" %>
+      </div>
+
+      <div class="mb-3">
+        <%= f.label :password, class: "form-label" %>
+        <%= f.password_field :password, class: "form-control", required: true, placeholder: "Set a password" %>
+      </div>
+
+      <div class="d-flex justify-content-between">
+        <%= link_to "Cancel", admin_dashboard_path, class: "btn btn-secondary" %>
+        <%= f.submit "Create Buyer", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+  </div>
+</div>

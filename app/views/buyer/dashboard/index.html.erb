@@ -1,3 +1,12 @@
-<h1>Welcome, <%= current_user.name %>!</h1>
-<%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete } %>
-<p>This is your buyer dashboard.</p>
+<div class="container mt-5">
+  <div class="card shadow p-4">
+    <h1 class="text-center mb-4">Welcome, <%= current_user.name %>!</h1>
+
+    <div class="position-absolute top-0 end-0 p-3">
+      <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-danger" %>
+    </div>
+
+    <p class="text-center">This is your buyer dashboard. You can manage your subscriptions, view usage, and much more.</p>
+
+  </div>
+</div>
