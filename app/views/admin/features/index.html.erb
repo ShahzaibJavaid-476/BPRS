@@ -1,0 +1,32 @@
+<div class="container mt-5">
+  <h1 class="mb-4">Features</h1>
+  <%= link_to 'Create New Feature', new_admin_feature_path, class: "btn btn-primary mb-3" %>
+
+  <table class="table table-striped">
+    <thead>
+      <tr>
+        <th>Name</th>
+        <th>Code</th>
+        <th>Unit Price</th>
+        <th>Max Unit Limit</th>
+        <th>Plan</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @features.each do |feature| %>
+        <tr>
+          <td><%= feature.name %></td>
+          <td><%= feature.code %></td>
+          <td>$<%= feature.unit_price %></td>
+          <td><%= feature.max_unit_limit %></td>
+          <td><%= feature.plan.name if feature.plan %></td>
+          <td>
+            <%= link_to 'Edit', edit_admin_feature_path(feature), class: "btn btn-warning btn-sm" %>
+            <%= link_to 'Delete', admin_feature_path(feature), data: { turbo_method: :delete, turbo_confirm: "Are you sure?" }, class: "btn btn-danger btn-sm" %>
+          </td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+</div>

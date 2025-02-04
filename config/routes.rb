@@ -19,6 +19,7 @@ Rails.application.routes.draw do
     get 'dashboard', to: 'dashboard#index'
     resources :buyers, only: [:new, :create, :destroy]
     resources :plans
+    resources :features
   end
   
   namespace :buyer do
