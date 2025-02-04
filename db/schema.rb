@@ -10,15 +10,51 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_03_112643) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_04_064050) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "features", force: :cascade do |t|
+    t.string "name"
+    t.string "code"
+    t.decimal "unit_price"
+    t.integer "max_unit_limit"
+    t.bigint "plan_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["plan_id"], name: "index_features_on_plan_id"
+  end
 
   create_table "plans", force: :cascade do |t|
     t.string "name"
     t.decimal "monthly_fee"
+    t.bigint "admin_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["admin_id"], name: "index_plans_on_admin_id"
+  end
+
+  create_table "subscriptions", force: :cascade do |t|
+    t.bigint "buyer_id", null: false
+    t.bigint "plan_id", null: false
+    t.integer "billing_day"
+    t.boolean "active"
+    t.string "default"
+    t.string "true"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_subscriptions_on_buyer_id"
+    t.index ["plan_id"], name: "index_subscriptions_on_plan_id"
+  end
+
+  create_table "usages", force: :cascade do |t|
+    t.bigint "subscription_id", null: false
+    t.bigint "feature_id", null: false
+    t.integer "units_used"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_id"], name: "index_usages_on_feature_id"
+    t.index ["subscription_id"], name: "index_usages_on_subscription_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -34,4 +70,11 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_03_112643) do
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "features", "plans"
+  add_foreign_key "plans", "users", column: "admin_id"
+  add_foreign_key "subscriptions", "plans"
+  add_foreign_key "subscriptions", "users", column: "buyer_id"
+  add_foreign_key "usages", "features"
+  add_foreign_key "usages", "subscriptions"
 end
