@@ -4,7 +4,7 @@ class Admin::FeaturesController < ApplicationController
     before_action :set_feature, only: [:edit, :update, :destroy]
     before_action :set_plans, only: [:new, :create, :edit, :update]    
     def index
-        @features = Feature.includes(:plan).all
+        @features = Feature.all
     end
     def new
         @feature = Feature.new

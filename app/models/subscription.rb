@@ -4,4 +4,6 @@ class Subscription < ApplicationRecord
   has_many :usages, dependent: :destroy
 
   validates :billing_day, presence: true, inclusion: { in: 1..30 }
+  validates :plan_id, presence: true
+
 end

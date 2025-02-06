@@ -2,6 +2,7 @@ class Buyer::DashboardController < ApplicationController
     before_action :authenticate_user!
     before_action :authorize_buyer  
     def index
+      @plans = Plan.includes(:features)
     end
   
     private  

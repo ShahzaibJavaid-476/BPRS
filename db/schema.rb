@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_04_064050) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -19,10 +19,17 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_04_064050) do
     t.string "code"
     t.decimal "unit_price"
     t.integer "max_unit_limit"
-    t.bigint "plan_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["plan_id"], name: "index_features_on_plan_id"
+  end
+
+  create_table "plan_features", force: :cascade do |t|
+    t.bigint "plan_id", null: false
+    t.bigint "feature_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["feature_id"], name: "index_plan_features_on_feature_id"
+    t.index ["plan_id"], name: "index_plan_features_on_plan_id"
   end
 
   create_table "plans", force: :cascade do |t|
@@ -71,7 +78,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_04_064050) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
-  add_foreign_key "features", "plans"
+  add_foreign_key "plan_features", "features"
+  add_foreign_key "plan_features", "plans"
   add_foreign_key "plans", "users", column: "admin_id"
   add_foreign_key "subscriptions", "plans"
   add_foreign_key "subscriptions", "users", column: "buyer_id"
