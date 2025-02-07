@@ -1,6 +1,6 @@
 class Buyer::SubscriptionsController < ApplicationController
-    before_action :authenticate_user!
-    before_action :authorize_buyer
+  before_action :authenticate_user!
+  before_action :authorize_buyer
 
 =begin
     def subscribe
@@ -16,8 +16,9 @@ class Buyer::SubscriptionsController < ApplicationController
     end
 =end
 
-    private
-    def authorize_buyer
-        redirect_to root_path unless current_user.buyer?
-    end
+  private
+  def authorize_buyer
+    redirect_to root_path unless current_user.buyer?
+  end
+  
 end

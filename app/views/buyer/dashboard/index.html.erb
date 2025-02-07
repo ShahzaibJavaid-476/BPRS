@@ -5,6 +5,11 @@
       <%= link_to "Logout", destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-danger btn-sm" %>
     </div>
   </div>
+  <div class="d-flex justify-content-between align-items-center mb-3">
+  <h1>Dashboard</h1>
+  <%= render "shared/profile_icon" %>
+</div>
+
 
   <div class="d-flex justify-content-between align-items-center mb-4">
     <h2 class="text-primary">Available Plans</h2>
