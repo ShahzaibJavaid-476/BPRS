@@ -1,5 +1,6 @@
 Rails.application.routes.draw do
   devise_for :users
+  resource :profile, only: [:show, :edit, :update]
   devise_scope :user do
     get 'buyer/sign_in', to: 'devise/sessions#new', as: :new_buyer_session
   end  
@@ -17,10 +18,16 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-    resources :buyers, only: [:new, :create, :destroy]
+    resources :buyers, only: [:new, :create, :edit, :destroy]
+    resources :plans
+    resources :features
+    resources :subscriptions
   end
   
   namespace :buyer do
     get 'dashboard', to: 'dashboard#index'
+    resources :plans, only: [:index, :show] do
+      resources :subscriptions, only: [:new, :create]
+    end
   end
 end

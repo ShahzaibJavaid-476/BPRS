@@ -18,8 +18,11 @@
   </head>
 
   <body>
+    <% if flash[:notice] %>
+  <div class="alert alert-info text-center w-100 mb-0" style="position: fixed; top: 0; left: 50%; transform: translateX(-50%); z-index: 9999; padding: 10px;">
+    <%= flash[:notice] %>
+  </div>
+<% end %>
     <%= yield %>
-    <p class="notice"><%= notice %></p>
-       <p class="alert"><%= alert %></p>
   </body>
 </html>
