@@ -1,0 +1,658 @@
+diff --git a/app/controllers/admin/buyers_controller.rb b/app/controllers/admin/buyers_controller.rb
+index 89e5c42..d25b21e 100644
+--- a/app/controllers/admin/buyers_controller.rb
++++ b/app/controllers/admin/buyers_controller.rb
+@@ -13,7 +13,7 @@ class Admin::BuyersController < ApplicationController
+   
+     if @buyer.save
+       UserMailer.invitation_email(@buyer).deliver_now
+-      redirect_to admin_dashboard_path, notice: "Buyer added and invitation sent!"
++      redirect_to admin_dashboard_path, notice: 'Buyer added and invitation sent!'
+     else
+       render :new
+     end
+diff --git a/app/controllers/admin/features_controller.rb b/app/controllers/admin/features_controller.rb
+index 363a819..03ef122 100644
+--- a/app/controllers/admin/features_controller.rb
++++ b/app/controllers/admin/features_controller.rb
+@@ -15,7 +15,7 @@ class Admin::FeaturesController < ApplicationController
+     if @feature.save
+       redirect_to admin_features_path, notice: 'Feature was successfully created.'
+     else
+-      flash[:notice] = "Feature could not be created"
++      flash[:notice] = 'Feature could not be created'
+       render :new
+     end
+   end
+@@ -25,7 +25,7 @@ class Admin::FeaturesController < ApplicationController
+     if @feature.update(feature_params)
+       redirect_to admin_features_path, notice: 'Feature was successfully updated.'
+     else
+-      flash[:notice] = "Feature could not be updated"
++      flash[:notice] = 'Feature could not be updated'
+       render :edit
+     end
+   end
+@@ -47,5 +47,5 @@ class Admin::FeaturesController < ApplicationController
+   def authorize_admin
+     redirect_to root_path unless current_user.admin?
+   end
+-  
++   
+ end
+diff --git a/app/controllers/admin/payments_controller.rb b/app/controllers/admin/payments_controller.rb
+index 2238c8f..6deaf1e 100644
+--- a/app/controllers/admin/payments_controller.rb
++++ b/app/controllers/admin/payments_controller.rb
+@@ -1,6 +1,6 @@
+ class Admin::PaymentsController < ApplicationController
+-    before_action :authenticate_user!
+-    before_action :authorize_admin
++  before_action :authenticate_user!
++  before_action :authorize_admin
+ 
+   def index
+     @payments = Payment.includes(:buyer, :plan).order(created_at: :desc)
+diff --git a/app/controllers/admin/plans_controller.rb b/app/controllers/admin/plans_controller.rb
+index 564cb03..0124e8d 100644
+--- a/app/controllers/admin/plans_controller.rb
++++ b/app/controllers/admin/plans_controller.rb
+@@ -16,7 +16,7 @@ class Admin::PlansController < ApplicationController
+     if @plan.save
+       redirect_to admin_plans_path, notice: 'Plan is successfully created.'
+     else
+-      flash[:notice] = "Plan was not created successfully"
++      flash[:notice] = 'Plan was not created successfully'
+       render :new, status: :unprocessable_entity
+     end
+   end
+diff --git a/app/controllers/admin/usage_controller.rb b/app/controllers/admin/usage_controller.rb
+new file mode 100644
+index 0000000..837416b
+--- /dev/null
++++ b/app/controllers/admin/usage_controller.rb
+@@ -0,0 +1,13 @@
++class Admin::UsageController < ApplicationController
++  before_action :authenticate_user!
++  before_action :authorize_admin
++
++  def index
++    @usages = Usage.includes(:buyer, :feature, :subscription).all
++  end
++
++  private
++  def authorize_admin
++    redirect_to root_path unless current_user.admin?
++  end
++end
+diff --git a/app/controllers/buyer/plans_controller.rb b/app/controllers/buyer/plans_controller.rb
+index 42ad011..86a1e77 100644
+--- a/app/controllers/buyer/plans_controller.rb
++++ b/app/controllers/buyer/plans_controller.rb
+@@ -4,14 +4,10 @@ class Buyer::PlansController < ApplicationController
+   def index
+     @plans = Plan.all
+   end
+-  def show
+-    @plan = Plan.find(params[:id])
+-    @subscription_types = ["Basic", "Premium", "Platinum"]
+-  end
+ 
+   private
+   def authorize_buyer
+-    redirect_to root_path, alert: "Unauthorized access. Only buyers can access this page." unless current_user.buyer?
++    redirect_to root_path, alert: 'Unauthorized access. Only buyers can access this page.' unless current_user.buyer?
+   end
+   
+ end
+diff --git a/app/controllers/buyer/subscriptions_controller.rb b/app/controllers/buyer/subscriptions_controller.rb
+index c12b7d9..2ab37a5 100644
+--- a/app/controllers/buyer/subscriptions_controller.rb
++++ b/app/controllers/buyer/subscriptions_controller.rb
+@@ -13,7 +13,7 @@ class Buyer::SubscriptionsController < ApplicationController
+       buyer_id: current_user.id,
+       plan_id: @plan.id,
+       amount: @plan.monthly_fee,
+-      status: "success", 
++      status: 'success', 
+       transaction_id: SecureRandom.hex(10)
+     )
+ 
+@@ -21,21 +21,20 @@ class Buyer::SubscriptionsController < ApplicationController
+       subscription = current_user.subscriptions.find_or_initialize_by(plan_id: @plan.id)
+       subscription.update!(active: true, billing_day: Date.today.day)
+ 
+-      redirect_to buyer_dashboard_path, notice: "Subscription activated successfully!"
++      redirect_to buyer_dashboard_path, notice: 'Subscription activated successfully!'
+     else
+-      redirect_to buyer_dashboard_path, alert: "Payment failed! Please try again."
++      redirect_to buyer_dashboard_path, alert: 'Payment failed! Please try again.'
+     end
+   end
+ 
+-  # Unsubscribes buyer by deactivating subscription
+   def destroy
+     subscription = current_user.subscriptions.find(params[:id])
+     
+     if subscription.active?
+       subscription.update!(active: false)
+-      redirect_to buyer_dashboard_path, notice: "Subscription cancelled successfully"
++      redirect_to buyer_dashboard_path, notice: 'Subscription cancelled successfully'
+     else
+-      redirect_to buyer_dashboard_path, alert: "You are not subscribed to this plan."
++      redirect_to buyer_dashboard_path, alert: 'You are not subscribed to this plan.'
+     end
+   end
+ 
+diff --git a/app/controllers/buyer/usages_controller.rb b/app/controllers/buyer/usages_controller.rb
+new file mode 100644
+index 0000000..95d64de
+--- /dev/null
++++ b/app/controllers/buyer/usages_controller.rb
+@@ -0,0 +1,22 @@
++class Buyer::UsagesController < ApplicationController
++  before_action :authenticate_user!
++  before_action :authorize_buyer
++
++  def create 
++    @feature = Feature.find(params[:feature_id])
++    @subscription = current_user.subscriptions.find_by(id: params[:subscription_id], active: true)
++    if @subscription
++      @usage = Usage.find_or_initialize_by(buyer_id: current_user.id, subscription_id: @subscription.id, feature_id: @feature.id)
++      @usage.units_used = (@usage.units_used || 0) + params[:units_used].to_i
++      @usage.save!
++      redirect_to buyer_dashboard_path, notice: 'Feature used successfully'
++    else
++      redirect_to buyer_dashboard_path, alert: 'You must have active susbcription to use this feature'
++    end
++  end
++
++  private
++  def authorize_buyer
++    redirect_to root_path unless current_user.buyer?
++  end
++end
+diff --git a/app/controllers/profiles_controller.rb b/app/controllers/profiles_controller.rb
+index 498dca3..90b8695 100644
+--- a/app/controllers/profiles_controller.rb
++++ b/app/controllers/profiles_controller.rb
+@@ -1,23 +1,23 @@
+ class ProfilesController < ApplicationController
+-    def show 
+-        @user = current_user
+-    end
++  def show 
++    @user = current_user
++  end
+ 
+-    def edit 
+-        @user = current_user
+-    end
++  def edit 
++    @user = current_user
++  end
+ 
+-    def update 
+-        @user = current_user
+-        if @user.update(user_params)
+-            redirect_to profile_path, notice: "Profile updated successfully!"
+-        else
+-            render :edit
+-        end
++  def update 
++    @user = current_user
++    if @user.update(user_params)
++      redirect_to profile_path, notice: 'Profile updated successfully!'
++    else
++      render :edit
+     end
++  end
+ 
+-    private
+-    def user_params
+-        params.require(:user).permit(:name, :email, :profile_photo)
+-    end
++  private
++  def user_params
++    params.require(:user).permit(:name, :email, :profile_photo)
++  end
+ end
+diff --git a/app/helpers/admin/usage_helper.rb b/app/helpers/admin/usage_helper.rb
+new file mode 100644
+index 0000000..df766c2
+--- /dev/null
++++ b/app/helpers/admin/usage_helper.rb
+@@ -0,0 +1,2 @@
++module Admin::UsageHelper
++end
+diff --git a/app/helpers/buyer/usage_helper.rb b/app/helpers/buyer/usage_helper.rb
+new file mode 100644
+index 0000000..d05ac5e
+--- /dev/null
++++ b/app/helpers/buyer/usage_helper.rb
+@@ -0,0 +1,2 @@
++module Buyer::UsageHelper
++end
+diff --git a/app/mailers/user_mailer.rb b/app/mailers/user_mailer.rb
+index 800a905..137d52f 100644
+--- a/app/mailers/user_mailer.rb
++++ b/app/mailers/user_mailer.rb
+@@ -1,9 +1,9 @@
+ class UserMailer < ApplicationMailer
+-    default from: 'no-reply@billing_system.com'  
+-    def invitation_email(user)
+-      @user = user
+-      @url = new_user_session_url
+-      mail(to: @user.email, subject: 'Welcome to Billing System! Please Log In')
+-    end
++  default from: 'no-reply@billing_system.com'  
++  def invitation_email(user)
++    @user = user
++    @url = new_user_session_url
++    mail(to: @user.email, subject: 'Welcome to Billing System! Please Log In')
++  end
+ end
+   
+\ No newline at end of file
+diff --git a/app/models/feature.rb b/app/models/feature.rb
+index 6874588..c78f252 100644
+--- a/app/models/feature.rb
++++ b/app/models/feature.rb
+@@ -1,7 +1,8 @@
+ class Feature < ApplicationRecord
+   has_many :plan_features, dependent: :destroy
+-  has_and_belongs_to_many :plans
++  #has_and_belongs_to_many :plans
+   has_many :plans, through: :plan_features
++  has_many :usages
+ 
+   validates :name, :code, :unit_price, :max_unit_limit, presence: true
+   validates :unit_price, numericality: { greater_than: 0 }
+diff --git a/app/models/usage.rb b/app/models/usage.rb
+index 855bc60..05d0502 100644
+--- a/app/models/usage.rb
++++ b/app/models/usage.rb
+@@ -1,4 +1,5 @@
+ class Usage < ApplicationRecord
++  belongs_to :buyer, class_name: 'User'
+   belongs_to :subscription
+   belongs_to :feature
+ 
+diff --git a/app/models/user.rb b/app/models/user.rb
+index c80cc71..75bdfcc 100644
+--- a/app/models/user.rb
++++ b/app/models/user.rb
+@@ -9,5 +9,7 @@ class User < ApplicationRecord
+   has_one_attached :profile_photo
+   has_many :subscriptions, foreign_key: :buyer_id, dependent: :destroy
+   has_many :plans, through: :subscriptions
++  has_many :features, through: :plans
++  has_many :usages, through: :subscriptions
+   
+ end
+\ No newline at end of file
+diff --git a/app/views/admin/dashboard/index.html.erb b/app/views/admin/dashboard/index.html.erb
+index 086b2b8..e5ad8f8 100644
+--- a/app/views/admin/dashboard/index.html.erb
++++ b/app/views/admin/dashboard/index.html.erb
+@@ -48,7 +48,6 @@
+             <td><%= buyer.name %></td>
+             <td><%= buyer.email %></td>
+             <td>
+-              <%= link_to 'Edit', edit_admin_buyer_path(buyer), class: "btn btn-sm btn-warning" %>
+               <%= link_to 'Delete', admin_buyer_path(buyer), 
+                 class: "btn btn-sm btn-danger",
+                 data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this buyer?" } 
+@@ -59,4 +58,27 @@
+       </tbody>
+     </table>
+   </div>
+-</div>
+\ No newline at end of file
++</div>
++<h3>Feature Usage by Buyers</h3>
++<table class="table table-striped">
++  <thead>
++    <tr>
++      <th>Buyer</th>
++      <th>Plan</th>
++      <th>Feature</th>
++      <th>Units Used</th>
++      <th>Used On</th>
++    </tr>
++  </thead>
++  <tbody>
++    <% Usage.includes(:buyer, :feature, :subscription).each do |usage| %>
++      <tr>
++        <td><%= usage.buyer.name %></td>
++        <td><%= usage.subscription.plan.name %></td>
++        <td><%= usage.feature.name %></td>
++        <td><%= usage.units_used %></td>
++        <td><%= usage.created_at.strftime("%Y-%m-%d %H:%M") %></td>
++      </tr>
++    <% end %>
++  </tbody>
++</table>
+diff --git a/app/views/admin/subscriptions/_form.html.erb b/app/views/admin/subscriptions/_form.html.erb
+index e6060ff..e69de29 100644
+--- a/app/views/admin/subscriptions/_form.html.erb
++++ b/app/views/admin/subscriptions/_form.html.erb
+@@ -1,25 +0,0 @@
+-<%= form_with(model: @subscription, url: admin_subscriptions_path, local: true, class: "card p-4 shadow") do |f| %>
+-  <div class="mb-3">
+-    <%= f.label :buyer_id, "Buyer", class: "form-label" %>
+-    <%= f.collection_select :buyer_id, User.where(role: "buyer"), :id, :name, { prompt: "Select a buyer" }, class: "form-control" %>
+-  </div>
+-
+-  <div class="mb-3">
+-    <%= f.label :plan_id, "Plan", class: "form-label" %>
+-    <%= f.collection_select :plan_id, Plan.all, :id, :name, { prompt: "Select a plan" }, class: "form-control" %>
+-  </div>
+-
+-  <div class="mb-3">
+-    <%= f.label :billing_day, "Billing Day (1-30)", class: "form-label" %>
+-    <%= f.number_field :billing_day, in: 1..30, class: "form-control" %>
+-  </div>
+-
+-  <div class="form-check">
+-    <%= f.check_box :active, class: "form-check-input" %>
+-    <%= f.label :active, "Active", class: "form-check-label" %>
+-  </div>
+-
+-  <div class="mt-3">
+-    <%= f.submit "Save Subscription", class: "btn btn-success" %>
+-  </div>
+-<% end %>
+diff --git a/app/views/admin/subscriptions/index.html.erb b/app/views/admin/subscriptions/index.html.erb
+index fa58e15..13a9ae8 100644
+--- a/app/views/admin/subscriptions/index.html.erb
++++ b/app/views/admin/subscriptions/index.html.erb
+@@ -1,5 +1,4 @@
+ <h1>Subscriptions</h1>
+-<%= link_to 'New Subscription', new_admin_subscription_path, class: "btn btn-primary" %>
+ 
+ <table class="table mt-3">
+   <thead>
+@@ -16,7 +15,7 @@
+       <tr>
+         <td><%= subscription.buyer.name %></td>
+         <td><%= subscription.plan.name %></td>
+-        <td><%= subscription.billing_day %></td>
++        <td><%= subscription.created_at+1.month %></td>
+         <td><%= subscription.active ? 'Active' : 'Inactive' %></td>
+         <td>
+           <%= link_to 'Edit', edit_admin_subscription_path(subscription), class: "btn btn-warning btn-sm" %>
+diff --git a/app/views/buyer/dashboard/index.html.erb b/app/views/buyer/dashboard/index.html.erb
+index 4eb1519..0c53efd 100644
+--- a/app/views/buyer/dashboard/index.html.erb
++++ b/app/views/buyer/dashboard/index.html.erb
+@@ -26,7 +26,18 @@
+           <td>
+             <ul class="list-unstyled">
+               <% subscription.plan.features.each do |feature| %>
+-                <li>✅ <%= feature.name %> (<%= number_to_currency(feature.unit_price) %>)</li>
++                <li>✅ <%= feature.name %> (<%= number_to_currency(feature.unit_price) %>)
++                <div class="btn-group ms-2">
++                    <%= button_to "Use 2 Units", buyer_usages_path(feature_id: feature.id, subscription_id: subscription.id, buyer_id: current_user.id, units_used: 2), 
++                        method: :post, class: "btn btn-primary btn-sm" %>
++
++                    <%= button_to "Use 5 Units", buyer_usages_path(feature_id: feature.id, subscription_id: subscription.id, buyer_id: current_user.id, units_used: 5), 
++                        method: :post, class: "btn btn-warning btn-sm" %>
++
++                    <%= button_to "Use 7 Units", buyer_usages_path(feature_id: feature.id, subscription_id: subscription.id, buyer_id: current_user.id, units_used: 7), 
++                        method: :post, class: "btn btn-danger btn-sm" %>
++                  </div>
++                </li>
+               <% end %>
+             </ul>
+           </td>
+@@ -88,30 +99,24 @@
+   <% end %>
+ </div>
+ 
+-<div class="container mt-5">
+-  <h2>Your Feature Usage</h2>
+-  <% if current_user.subscriptions.any? %>
+-    <table class="table table-bordered">
+-      <thead>
++<h2 class="mt-5">Your Feature Usage History</h2>
++  <table class="table table-bordered">
++    <thead class="table-dark">
++      <tr>
++        <th>Plan</th>
++        <th>Feature</th>
++        <th>Units Used</th>
++        <th>Date</th>
++      </tr>
++    </thead>
++    <tbody>
++      <% current_user.usages.includes(:feature, :subscription).order(created_at: :desc).each do |usage| %>
+         <tr>
+-          <th>Plan</th>
+-          <th>Feature</th>
+-          <th>Units Used</th>
++          <td><%= usage.subscription.plan.name %></td>
++          <td><%= usage.feature.name %></td>
++          <td><strong><%= usage.units_used %></strong> units</td>
++          <td><%= usage.created_at.strftime("%B %d, %Y") %></td>
+         </tr>
+-      </thead>
+-      <tbody>
+-        <% current_user.subscriptions.each do |subscription| %>
+-          <% subscription.usages.each do |usage| %>
+-            <tr>
+-              <td><%= subscription.plan.name %></td>
+-              <td><%= usage.feature.name %></td>
+-              <td><%= current_user.feature_usages.find_by(feature: feature)&.used_units || 0 %></td>
+-            </tr>
+-          <% end %>
+-        <% end %>
+-      </tbody>
+-    </table>
+-  <% else %>
+-    <p>You have no usage entries yet.</p>
+-  <% end %>
+-</div>
++      <% end %>
++    </tbody>
++  </table>
+\ No newline at end of file
+diff --git a/app/views/buyer/plans/show.html.erb b/app/views/buyer/plans/show.html.erb
+deleted file mode 100644
+index f8f68ba..0000000
+--- a/app/views/buyer/plans/show.html.erb
++++ /dev/null
+@@ -1,31 +0,0 @@
+-<div class="container mt-5">
+-  <!-- Plan Name and Monthly Fee -->
+-  <div class="card shadow-sm mb-4">
+-    <div class="card-body text-center">
+-      <h2 class="text-primary font-weight-bold"><%= @plan.name %></h2>
+-      <p class="text-muted">Monthly Fee: <%= number_to_currency(@plan.monthly_fee) %></p>
+-    </div>
+-  </div>
+-
+-  <!-- Subscription Types -->
+-  <div class="card shadow-lg">
+-    <div class="card-body">
+-      <h3 class="text-center text-primary mb-4">Choose a Subscription Type</h3>
+-
+-      <!-- Subscription Options -->
+-      <div class="row text-center">
+-        <% @subscription_types.each do |type| %>
+-          <div class="col-md-4 mb-3">
+-            <div class="card shadow-lg">
+-              <div class="card-body">
+-                <h4 class="card-title"><%= type.capitalize %></h4>
+-                <p class="card-text">Select this subscription to get started with <%= @plan.name %>.</p>
+-                <%= link_to "Subscribe", new_buyer_plan_subscription_path(@plan, subscription_type: type), class: "btn btn-success btn-lg" %>
+-              </div>
+-            </div>
+-          </div>
+-        <% end %>
+-      </div>
+-    </div>
+-  </div>
+-</div>
+diff --git a/config/routes.rb b/config/routes.rb
+index ebd962b..cc3e1ca 100644
+--- a/config/routes.rb
++++ b/config/routes.rb
+@@ -22,7 +22,7 @@ Rails.application.routes.draw do
+     resources :plans
+     resources :features
+     resources :subscriptions
+-    resources :usages, except: [:show]
++    resources :usages
+     resources :payments, only: [:index]
+   end
+   
+@@ -31,5 +31,6 @@ Rails.application.routes.draw do
+     resources :plans, only: [:index, :show] do
+       resources :subscriptions, only: [:new, :create, :edit, :destroy, :show]
+     end
++    resources :usages, only: [:create]
+   end
+ end
+diff --git a/db/migrate/20250212071555_add_subscription_id_to_usages.rb b/db/migrate/20250212071555_add_subscription_id_to_usages.rb
+new file mode 100644
+index 0000000..1eecea9
+--- /dev/null
++++ b/db/migrate/20250212071555_add_subscription_id_to_usages.rb
+@@ -0,0 +1,5 @@
++class AddSubscriptionIdToUsages < ActiveRecord::Migration[7.2]
++  def change
++    add_reference :usages, :subscription, null: false, foreign_key: true
++  end
++end
+diff --git a/db/migrate/20250212072017_add_buyer_id_to_usages.rb b/db/migrate/20250212072017_add_buyer_id_to_usages.rb
+new file mode 100644
+index 0000000..fb9b4df
+--- /dev/null
++++ b/db/migrate/20250212072017_add_buyer_id_to_usages.rb
+@@ -0,0 +1,5 @@
++class AddBuyerIdToUsages < ActiveRecord::Migration[7.2]
++  def change
++    add_reference :usages, :buyer, null: false, foreign_key: {to_table: :users}
++  end
++end
+diff --git a/db/migrate/20250212072424_remove_subscription_id_from_usages.rb b/db/migrate/20250212072424_remove_subscription_id_from_usages.rb
+new file mode 100644
+index 0000000..e1af759
+--- /dev/null
++++ b/db/migrate/20250212072424_remove_subscription_id_from_usages.rb
+@@ -0,0 +1,5 @@
++class RemoveSubscriptionIdFromUsages < ActiveRecord::Migration[7.2]
++  def change
++    remove_reference :usages, :subscription, null: false, foreign_key: true
++  end
++end
+diff --git a/db/migrate/20250212073016_remove_duplicate_subscription_id_from_usages.rb b/db/migrate/20250212073016_remove_duplicate_subscription_id_from_usages.rb
+new file mode 100644
+index 0000000..3a03fbc
+--- /dev/null
++++ b/db/migrate/20250212073016_remove_duplicate_subscription_id_from_usages.rb
+@@ -0,0 +1,4 @@
++class RemoveDuplicateSubscriptionIdFromUsages < ActiveRecord::Migration[7.2]
++  def change
++  end
++end
+diff --git a/db/migrate/20250213070443_add_subscription_id_to_usage.rb b/db/migrate/20250213070443_add_subscription_id_to_usage.rb
+new file mode 100644
+index 0000000..f3a437c
+--- /dev/null
++++ b/db/migrate/20250213070443_add_subscription_id_to_usage.rb
+@@ -0,0 +1,5 @@
++class AddSubscriptionIdToUsage < ActiveRecord::Migration[7.2]
++  def change
++    add_reference :usages, :subscription, null: false, foreign_key: true
++  end
++end
+diff --git a/db/schema.rb b/db/schema.rb
+index ece3889..5c5fbe0 100644
+--- a/db/schema.rb
++++ b/db/schema.rb
+@@ -10,7 +10,7 @@
+ #
+ # It's strongly recommended that you check this file into your version control system.
+ 
+-ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
++ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
+   # These are extensions that must be enabled in order to support this database
+   enable_extension "plpgsql"
+ 
+@@ -51,6 +51,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
+     t.datetime "updated_at", null: false
+   end
+ 
++  create_table "payments", force: :cascade do |t|
++    t.bigint "buyer_id", null: false
++    t.bigint "plan_id", null: false
++    t.decimal "amount"
++    t.string "status"
++    t.string "transaction_id"
++    t.datetime "created_at", null: false
++    t.datetime "updated_at", null: false
++    t.index ["buyer_id"], name: "index_payments_on_buyer_id"
++    t.index ["plan_id"], name: "index_payments_on_plan_id"
++  end
++
+   create_table "plan_features", force: :cascade do |t|
+     t.bigint "plan_id", null: false
+     t.bigint "feature_id", null: false
+@@ -83,11 +95,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
+   end
+ 
+   create_table "usages", force: :cascade do |t|
+-    t.bigint "subscription_id", null: false
+     t.bigint "feature_id", null: false
+     t.integer "units_used"
+     t.datetime "created_at", null: false
+     t.datetime "updated_at", null: false
++    t.bigint "buyer_id", null: false
++    t.bigint "subscription_id", null: false
++    t.index ["buyer_id"], name: "index_usages_on_buyer_id"
+     t.index ["feature_id"], name: "index_usages_on_feature_id"
+     t.index ["subscription_id"], name: "index_usages_on_subscription_id"
+   end
+@@ -108,6 +122,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
+ 
+   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
++  add_foreign_key "payments", "plans"
++  add_foreign_key "payments", "users", column: "buyer_id"
+   add_foreign_key "plan_features", "features"
+   add_foreign_key "plan_features", "plans"
+   add_foreign_key "plans", "users", column: "admin_id"
+@@ -115,4 +131,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
+   add_foreign_key "subscriptions", "users", column: "buyer_id"
+   add_foreign_key "usages", "features"
+   add_foreign_key "usages", "subscriptions"
++  add_foreign_key "usages", "users", column: "buyer_id"
+ end
+diff --git a/test/controllers/admin/usage_controller_test.rb b/test/controllers/admin/usage_controller_test.rb
+new file mode 100644
+index 0000000..a3a0a72
+--- /dev/null
++++ b/test/controllers/admin/usage_controller_test.rb
+@@ -0,0 +1,7 @@
++require "test_helper"
++
++class Admin::UsageControllerTest < ActionDispatch::IntegrationTest
++  # test "the truth" do
++  #   assert true
++  # end
++end
+diff --git a/test/controllers/buyer/usage_controller_test.rb b/test/controllers/buyer/usage_controller_test.rb
+new file mode 100644
+index 0000000..18dede3
+--- /dev/null
++++ b/test/controllers/buyer/usage_controller_test.rb
+@@ -0,0 +1,7 @@
++require "test_helper"
++
++class Buyer::UsageControllerTest < ActionDispatch::IntegrationTest
++  # test "the truth" do
++  #   assert true
++  # end
++end

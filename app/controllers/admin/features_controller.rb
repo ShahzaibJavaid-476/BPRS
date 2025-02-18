@@ -15,7 +15,7 @@ class Admin::FeaturesController < ApplicationController
     if @feature.save
       redirect_to admin_features_path, notice: 'Feature was successfully created.'
     else
-      flash[:notice] = "Feature could not be created"
+      flash[:notice] = 'Feature could not be created'
       render :new
     end
   end
@@ -25,7 +25,7 @@ class Admin::FeaturesController < ApplicationController
     if @feature.update(feature_params)
       redirect_to admin_features_path, notice: 'Feature was successfully updated.'
     else
-      flash[:notice] = "Feature could not be updated"
+      flash[:notice] = 'Feature could not be updated'
       render :edit
     end
   end
@@ -47,5 +47,5 @@ class Admin::FeaturesController < ApplicationController
   def authorize_admin
     redirect_to root_path unless current_user.admin?
   end
-  
+   
 end

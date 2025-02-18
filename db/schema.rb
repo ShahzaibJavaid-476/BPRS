@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -51,6 +51,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "payments", force: :cascade do |t|
+    t.bigint "buyer_id", null: false
+    t.bigint "plan_id", null: false
+    t.decimal "amount"
+    t.string "status"
+    t.string "transaction_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_payments_on_buyer_id"
+    t.index ["plan_id"], name: "index_payments_on_plan_id"
+  end
+
   create_table "plan_features", force: :cascade do |t|
     t.bigint "plan_id", null: false
     t.bigint "feature_id", null: false
@@ -83,11 +95,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
   end
 
   create_table "usages", force: :cascade do |t|
-    t.bigint "subscription_id", null: false
     t.bigint "feature_id", null: false
     t.integer "units_used"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "subscription_id", null: false
+    t.index ["buyer_id"], name: "index_usages_on_buyer_id"
     t.index ["feature_id"], name: "index_usages_on_feature_id"
     t.index ["subscription_id"], name: "index_usages_on_subscription_id"
   end
@@ -108,6 +122,8 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "payments", "plans"
+  add_foreign_key "payments", "users", column: "buyer_id"
   add_foreign_key "plan_features", "features"
   add_foreign_key "plan_features", "plans"
   add_foreign_key "plans", "users", column: "admin_id"
@@ -115,4 +131,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_07_093448) do
   add_foreign_key "subscriptions", "users", column: "buyer_id"
   add_foreign_key "usages", "features"
   add_foreign_key "usages", "subscriptions"
+  add_foreign_key "usages", "users", column: "buyer_id"
 end

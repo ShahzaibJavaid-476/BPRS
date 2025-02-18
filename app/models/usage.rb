@@ -1,4 +1,5 @@
 class Usage < ApplicationRecord
+  belongs_to :buyer, class_name: 'User'
   belongs_to :subscription
   belongs_to :feature
 

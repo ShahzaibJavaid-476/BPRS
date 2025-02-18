@@ -16,7 +16,7 @@ class Admin::PlansController < ApplicationController
     if @plan.save
       redirect_to admin_plans_path, notice: 'Plan is successfully created.'
     else
-      flash[:notice] = "Plan was not created successfully"
+      flash[:notice] = 'Plan was not created successfully'
       render :new, status: :unprocessable_entity
     end
   end

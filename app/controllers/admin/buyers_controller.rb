@@ -13,7 +13,7 @@ class Admin::BuyersController < ApplicationController
   
     if @buyer.save
       UserMailer.invitation_email(@buyer).deliver_now
-      redirect_to admin_dashboard_path, notice: "Buyer added and invitation sent!"
+      redirect_to admin_dashboard_path, notice: 'Buyer added and invitation sent!'
     else
       render :new
     end

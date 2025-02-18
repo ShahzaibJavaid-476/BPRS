@@ -1,0 +1,26 @@
+<%= form_with model: Payment.new, url: buyer_plan_subscriptions_path(@plan), method: :post, local: true, html: { class: "p-4 bg-light rounded shadow-sm" } do |f| %>
+  <h4 class="mb-3 text-center">Enter Payment Details</h4>
+
+  <div class="mb-3">
+    <label for="card_number" class="form-label fw-bold">Card Number</label>
+    <div class="input-group">
+      <span class="input-group-text"><i class="bi bi-credit-card"></i></span>
+      <%= f.text_field :card_number, class: "form-control", placeholder: "1234 5678 9012 3456", required: true %>
+    </div>
+  </div>
+
+  <div class="row">
+    <div class="col-md-6 mb-3">
+      <label for="expiry_date" class="form-label fw-bold">Expiry Date</label>
+      <%= f.text_field :expiry_date, class: "form-control", placeholder: "MM/YY", required: true %>
+    </div>
+    <div class="col-md-6 mb-3">
+      <label for="cvv" class="form-label fw-bold">CVV</label>
+      <%= f.text_field :cvv, class: "form-control", placeholder: "123", required: true %>
+    </div>
+  </div>
+
+  <div class="d-grid">
+    <%= f.submit "Pay Now", class: "btn btn-primary btn-lg fw-bold" %>
+  </div>
+<% end %>
