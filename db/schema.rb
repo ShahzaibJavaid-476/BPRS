@@ -10,9 +10,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "active_storage_attachments", force: :cascade do |t|
+    t.string "name", null: false
+    t.string "record_type", null: false
+    t.bigint "record_id", null: false
+    t.bigint "blob_id", null: false
+    t.datetime "created_at", null: false
+    t.index ["blob_id"], name: "index_active_storage_attachments_on_blob_id"
+    t.index ["record_type", "record_id", "name", "blob_id"], name: "index_active_storage_attachments_uniqueness", unique: true
+  end
+
+  create_table "active_storage_blobs", force: :cascade do |t|
+    t.string "key", null: false
+    t.string "filename", null: false
+    t.string "content_type"
+    t.text "metadata"
+    t.string "service_name", null: false
+    t.bigint "byte_size", null: false
+    t.string "checksum"
+    t.datetime "created_at", null: false
+    t.index ["key"], name: "index_active_storage_blobs_on_key", unique: true
+  end
+
+  create_table "active_storage_variant_records", force: :cascade do |t|
+    t.bigint "blob_id", null: false
+    t.string "variation_digest", null: false
+    t.index ["blob_id", "variation_digest"], name: "index_active_storage_variant_records_uniqueness", unique: true
+  end
 
   create_table "features", force: :cascade do |t|
     t.string "name"
@@ -21,6 +49,18 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
     t.integer "max_unit_limit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "payments", force: :cascade do |t|
+    t.bigint "buyer_id", null: false
+    t.bigint "plan_id", null: false
+    t.decimal "amount"
+    t.string "status"
+    t.string "transaction_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_payments_on_buyer_id"
+    t.index ["plan_id"], name: "index_payments_on_plan_id"
   end
 
   create_table "plan_features", force: :cascade do |t|
@@ -55,11 +95,13 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
   end
 
   create_table "usages", force: :cascade do |t|
-    t.bigint "subscription_id", null: false
     t.bigint "feature_id", null: false
     t.integer "units_used"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "buyer_id", null: false
+    t.bigint "subscription_id", null: false
+    t.index ["buyer_id"], name: "index_usages_on_buyer_id"
     t.index ["feature_id"], name: "index_usages_on_feature_id"
     t.index ["subscription_id"], name: "index_usages_on_subscription_id"
   end
@@ -78,6 +120,10 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end
 
+  add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "payments", "plans"
+  add_foreign_key "payments", "users", column: "buyer_id"
   add_foreign_key "plan_features", "features"
   add_foreign_key "plan_features", "plans"
   add_foreign_key "plans", "users", column: "admin_id"
@@ -85,4 +131,5 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_05_153748) do
   add_foreign_key "subscriptions", "users", column: "buyer_id"
   add_foreign_key "usages", "features"
   add_foreign_key "usages", "subscriptions"
+  add_foreign_key "usages", "users", column: "buyer_id"
 end
