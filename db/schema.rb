@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
+ActiveRecord::Schema[7.2].define(version: 2025_02_23_202051) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -49,6 +49,21 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
     t.integer "max_unit_limit"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "invoices", force: :cascade do |t|
+    t.bigint "buyer_id", null: false
+    t.bigint "subscription_id", null: false
+    t.bigint "plan_id", null: false
+    t.string "stripe_invoice_id"
+    t.integer "total_amount"
+    t.string "status"
+    t.date "billing_period"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["buyer_id"], name: "index_invoices_on_buyer_id"
+    t.index ["plan_id"], name: "index_invoices_on_plan_id"
+    t.index ["subscription_id"], name: "index_invoices_on_subscription_id"
   end
 
   create_table "payments", force: :cascade do |t|
@@ -122,6 +137,9 @@ ActiveRecord::Schema[7.2].define(version: 2025_02_13_070443) do
 
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "invoices", "plans"
+  add_foreign_key "invoices", "subscriptions"
+  add_foreign_key "invoices", "users", column: "buyer_id"
   add_foreign_key "payments", "plans"
   add_foreign_key "payments", "users", column: "buyer_id"
   add_foreign_key "plan_features", "features"

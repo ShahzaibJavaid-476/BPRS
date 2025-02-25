@@ -29,8 +29,12 @@ Rails.application.routes.draw do
   namespace :buyer do
     get 'dashboard', to: 'dashboard#index'
     resources :plans, only: [:index, :show] do
-      resources :subscriptions, only: [:new, :create, :destroy]
+      resources :subscriptions, only: [:new, :create, :destroy] do
+          get 'checkout', to: 'subscriptions#checkout', on: :collection
+      end
     end
     resources :usages, only: [:create]
   end
+
+  post '/webhooks/stripe', to: 'webhooks#stripe'
 end

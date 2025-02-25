@@ -11,7 +11,7 @@ class Buyer::UsagesController < ApplicationController
       @usage.save!
       redirect_to buyer_dashboard_path, notice: 'Feature used successfully'
     else
-      redirect_to buyer_dashboard_path, alert: 'You must have active susbcription to use this feature'
+      redirect_to buyer_dashboard_path, alert: 'You must have active subscription to use this feature'
     end
   end
 

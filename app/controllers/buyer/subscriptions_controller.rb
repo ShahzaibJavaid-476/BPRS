@@ -6,25 +6,34 @@ class Buyer::SubscriptionsController < ApplicationController
     @plan = Plan.find(params[:plan_id])
   end
 
-  def create
+  def checkout
     @plan = Plan.find(params[:plan_id])
-
-    payment = Payment.new(
-      buyer_id: current_user.id,
-      plan_id: @plan.id,
-      amount: @plan.monthly_fee,
-      status: 'success', 
-      transaction_id: SecureRandom.hex(10)
+    Stripe.api_key = ENV['STRIPE_SECRET_KEY']
+    session = Stripe::Checkout::Session.create(
+      payment_method_types: ['card'],
+      customer_email: current_user.email,
+      line_items: [{
+        price_data: {
+          currency: 'usd',
+          product_data: { name: @plan.name },
+          unit_amount: (@plan.monthly_fee * 100).to_i,
+          recurring: { interval: 'month' }
+        },
+        quantity: 1
+      }],
+      mode: 'subscription',
+      expand: ['invoice'],
+      success_url: buyer_dashboard_url + '?session_id={CHECKOUT_SESSION_ID}',
+      cancel_url: buyer_dashboard_url,
+      metadata: {
+        user_id: current_user.id,
+        plan_id: @plan.id
+      }
     )
-
-    if payment.save
-      subscription = current_user.subscriptions.find_or_initialize_by(plan_id: @plan.id)
-      subscription.update!(active: true, billing_day: Date.today.day)
-
-      redirect_to buyer_dashboard_path, notice: 'Subscription activated successfully!'
-    else
-      redirect_to buyer_dashboard_path, alert: 'Payment failed! Please try again.'
-    end
+    
+    redirect_to session.url, allow_other_host: true
+  rescue Stripe::StripeError => e
+    redirect_to buyer_dashboard_path, alert: "Stripe error: #{e.message}"
   end
 
   def destroy

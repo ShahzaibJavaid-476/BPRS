@@ -1,5 +1,5 @@
 class UserMailer < ApplicationMailer
-  default from: 'no-reply@billing_system.com'  
+  default from: ENV['GMAIL_USERNAME']  
   def invitation_email(user)
     @user = user
     @url = new_user_session_url

@@ -87,7 +87,7 @@
               <% if subscription&.active? %>
                 <%= button_to "Unsubscribe", buyer_plan_subscription_path(plan, subscription), method: :delete, class: "btn btn-danger btn-sm" %>
               <% else %>
-                <%= button_to "Subscribe", new_buyer_plan_subscription_path(plan_id: plan.id), method: :get, class: "btn btn-success btn-sm" %>
+                <%= button_to "Subscribe", checkout_buyer_plan_subscriptions_path(plan_id: plan.id), method: :get, class: "btn btn-success btn-sm", data: { turbo: false } %>
               <% end %>
             </div>
 

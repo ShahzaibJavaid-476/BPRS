@@ -11,5 +11,6 @@ class User < ApplicationRecord
   has_many :plans, through: :subscriptions
   has_many :features, through: :plans
   has_many :usages, through: :subscriptions
+  has_many :invoices, foreign_key: :buyer_id
   
 end
