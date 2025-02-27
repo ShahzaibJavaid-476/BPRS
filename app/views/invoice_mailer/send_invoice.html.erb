@@ -1,19 +1,19 @@
-<div class="container mt-5">
-  <div class="card shadow-lg">
-    <div class="card-body">
-      <h1 class="card-title text-primary text-center">Hello, <%= @buyer.name %>!</h1>
-      <p class="text-center text-muted">Your invoice is ready. Here are the details:</p>
-      <ul class="list-group list-group-flush">
-        <li class="list-group-item">
+<div class='container mt-5'>
+  <div class='card shadow-lg'>
+    <div class='card-body'>
+      <h1 class='card-title text-primary text-center'>Hello, <%= @buyer.name %>!</h1>
+      <p class='text-center text-muted'>Your invoice is ready. Here are the details:</p>
+      <ul class='list-group list-group-flush'>
+        <li class='list-group-item'>
           <strong>Amount Paid:</strong> <%= @invoice.total_amount %> USD
         </li>
-        <li class="list-group-item">
+        <li class='list-group-item'>
           <strong>Invoice Number:</strong> <%= @invoice.stripe_invoice_id %>
         </li>
       </ul>
-      <p class="text-center text-success font-weight-bold mt-3">Thank you for your business!</p>
+      <p class='text-center text-success font-weight-bold mt-3'>Thank you for your business!</p>
       <hr>
-      <p class="text-center text-muted">Need help? Contact our support team at shahzaibjavaid476@gmail.com</p>
+      <p class='text-center text-muted'>Need help? Contact our support team at shahzaibjavaid476@gmail.com</p>
     </div>
   </div>
 </div>

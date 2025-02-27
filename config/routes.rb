@@ -18,7 +18,7 @@ Rails.application.routes.draw do
   # root "posts#index"
   namespace :admin do
     get 'dashboard', to: 'dashboard#index'
-    resources :buyers, only: [:new, :create, :edit, :destroy]
+    resources :buyers, only: [:new, :create, :edit, :update, :destroy]
     resources :plans
     resources :features
     resources :subscriptions

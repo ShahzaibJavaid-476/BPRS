@@ -2,9 +2,9 @@
   <div class="profile-icon">
     <%= link_to profile_path do %>
       <% if current_user.profile_photo.attached? %>
-        <%= image_tag current_user.profile_photo.variant(resize: "50x50"), class: "rounded-circle", alt: "Profile" %>
+        <%= image_tag current_user.profile_photo, class: "rounded-circle img-thumbnail fixed_size", alt: "Profile" %>
       <% else %>
-        <%= image_tag "default_profile.png", class: "rounded-circle", alt: "Profile", size: "50x50" %>
+        <%= image_tag "default_profile.png", class: "rounded-circle img-thumbnail fixed_size", alt: "Profile" %>
       <% end %>
     <% end %>
   </div>

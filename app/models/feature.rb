@@ -1,8 +1,7 @@
 class Feature < ApplicationRecord
   has_many :plan_features, dependent: :destroy
-  #has_and_belongs_to_many :plans
   has_many :plans, through: :plan_features
-  has_many :usages
+  has_many :usages, dependent: :destroy
 
   validates :name, :code, :unit_price, :max_unit_limit, presence: true
   validates :unit_price, numericality: { greater_than: 0 }

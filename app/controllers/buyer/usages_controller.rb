@@ -1,6 +1,4 @@
-class Buyer::UsagesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :authorize_buyer
+class Buyer::UsagesController < BuyerController
 
   def create 
     @feature = Feature.find(params[:feature_id])
@@ -14,9 +12,5 @@ class Buyer::UsagesController < ApplicationController
       redirect_to buyer_dashboard_path, alert: 'You must have active subscription to use this feature'
     end
   end
-
-  private
-  def authorize_buyer
-    redirect_to root_path unless current_user.buyer?
-  end
 end
+

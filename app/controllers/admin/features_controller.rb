@@ -1,14 +1,15 @@
-class Admin::FeaturesController < ApplicationController
-  before_action :authenticate_user!
-  before_action :authorize_admin
+class Admin::FeaturesController < AdminController
   before_action :set_feature, only: [:edit, :update, :destroy]
-  before_action :set_plans, only: [:new, :create, :edit, :update]    
+  before_action :set_plans, only: [:new, :create, :edit, :update] 
+   
   def index
     @features = Feature.all
   end
+
   def new
     @feature = Feature.new
   end
+
   def create
     @feature = Feature.new(feature_params)
 
@@ -19,8 +20,10 @@ class Admin::FeaturesController < ApplicationController
       render :new
     end
   end
+
   def edit 
   end
+
   def update
     if @feature.update(feature_params)
       redirect_to admin_features_path, notice: 'Feature was successfully updated.'
@@ -29,6 +32,7 @@ class Admin::FeaturesController < ApplicationController
       render :edit
     end
   end
+
   def destroy
     @feature.destroy
     redirect_to admin_features_path, notice: 'Feature was successfully deleted.'
@@ -43,9 +47,6 @@ class Admin::FeaturesController < ApplicationController
   end    
   def set_plans
     @plans = Plan.all
-  end    
-  def authorize_admin
-    redirect_to root_path unless current_user.admin?
-  end
-   
+  end       
 end
+

@@ -1,2 +1,0 @@
-module Buyer::PlansHelper
-end

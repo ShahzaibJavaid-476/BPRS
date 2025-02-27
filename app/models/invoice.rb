@@ -3,7 +3,7 @@ class Invoice < ApplicationRecord
   belongs_to :subscription
   belongs_to :plan
 
-  enum status: {pending: 'pending', paid: 'paid', overdue: 'overdue'}
+  enum status: { pending: 'pending', paid: 'paid', overdue: 'overdue' }
   after_create :send_invoice
 
   def send_invoice

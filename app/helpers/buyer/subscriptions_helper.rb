@@ -1,2 +1,0 @@
-module Buyer::SubscriptionsHelper
-end

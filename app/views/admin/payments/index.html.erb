@@ -1,7 +1,7 @@
-<h2 class="mb-3">Buyer Payments</h2>
+<h2 class='mb-3'>Buyer Payments</h2>
 
-<table class="table table-bordered table-striped">
-  <thead class="table-dark">
+<table class='table table-bordered table-striped'>
+  <thead class='table-dark'>
     <tr>
       <th>Buyer</th>
       <th>Plan</th>
@@ -21,14 +21,14 @@
         
         <td>
           <% status_class = case payment.status
-            when "success" then "badge bg-success"
-            when "failed" then "badge bg-danger"
-            when "pending" then "badge bg-warning"
+            when 'success' then 'badge bg-success'
+            when 'failed' then 'badge bg-danger'
+            when 'pending' then 'badge bg-warning'
           end %>
           <span class="<%= status_class %>"><%= payment.status.capitalize %></span>
         </td>
 
-        <td><%= payment.created_at.strftime("%B %d, %Y - %I:%M %p") %></td>
+        <td><%= payment.created_at.strftime('%B %d, %Y - %I:%M %p') %></td>
       </tr>
     <% end %>
   </tbody>

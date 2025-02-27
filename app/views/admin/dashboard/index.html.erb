@@ -1,43 +1,41 @@
-<div class="container mt-5">
-  <div class="d-flex justify-content-between align-items-center mb-4">
-    <%= render "shared/profile_icon" %>
-    <h1 class="fw-bold">Admin Dashboard</h1>
-    <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: "btn btn-danger" %>
+<div class='container mt-5'>
+  <div class='d-flex justify-content-between align-items-center mb-4'>
+    <%= render 'shared/profile_icon' %>
+    <h1 class='fw-bold'>Admin Dashboard</h1>
+    <%= link_to 'Logout', destroy_user_session_path, data: { turbo_method: :delete }, class: 'btn btn-danger' %>
   </div>
 
-  <!-- Quick Links for Admin Actions -->
-  <div class="row mb-4">
-    <div class="col-md-3">
-      <%= link_to admin_payments_path, class: "btn btn-primary w-100 p-3 shadow" do %>
-        💳 View Payments
+  <div class='row mb-4'>
+    <div class='col-md-3'>
+      <%= link_to admin_payments_path, class: 'btn btn-primary w-100 p-3 shadow' do %>
+        View Payments
       <% end %>
     </div>
-    <div class="col-md-3">
-      <%= link_to admin_plans_path, class: "btn btn-info w-100 p-3 shadow" do %>
-        📜 Manage Plans
+    <div class='col-md-3'>
+      <%= link_to admin_plans_path, class: 'btn btn-info w-100 p-3 shadow' do %>
+        Manage Plans
       <% end %>
     </div>
-    <div class="col-md-3">
-      <%= link_to admin_features_path, class: "btn btn-secondary w-100 p-3 shadow" do %>
-        ⚙️ Manage Features
+    <div class='col-md-3'>
+      <%= link_to admin_features_path, class: 'btn btn-secondary w-100 p-3 shadow' do %>
+        Manage Features
       <% end %>
     </div>
-    <div class="col-md-3">
-      <%= link_to admin_subscriptions_path, class: "btn btn-success w-100 p-3 shadow" do %>
-        🔄 View Subscriptions
+    <div class='col-md-3'>
+      <%= link_to admin_subscriptions_path, class: 'btn btn-success w-100 p-3 shadow' do %>
+        View Subscriptions
       <% end %>
     </div>
   </div>
 
-  <!-- Buyers List -->
-  <div class="card shadow p-4">
-    <div class="d-flex justify-content-between align-items-center">
-      <h2 class="mb-3">Buyers List</h2>
-      <%= link_to '➕ Add Buyer', new_admin_buyer_path, class: "btn btn-success" %>
+  <div class='card shadow p-4'>
+    <div class='d-flex justify-content-between align-items-center'>
+      <h2 class='mb-3'>Buyers List</h2>
+      <%= link_to 'Add Buyer', new_admin_buyer_path, class: 'btn btn-success' %>
     </div>
 
-    <table class="table table-striped table-hover">
-      <thead class="table-dark">
+    <table class='table table-striped table-hover'>
+      <thead class='table-dark'>
         <tr>
           <th>Name</th>
           <th>Email</th>
@@ -50,10 +48,10 @@
             <td><%= buyer.name %></td>
             <td><%= buyer.email %></td>
             <td>
-              <%= link_to '✏️ Edit', edit_admin_buyer_path(buyer), class: "btn btn-sm btn-warning" %>
-              <%= link_to '🗑 Delete', admin_buyer_path(buyer), 
-                class: "btn btn-sm btn-danger",
-                data: { turbo_method: :delete, turbo_confirm: "Are you sure you want to delete this buyer?" } 
+              <%= link_to 'Edit', edit_admin_buyer_path(buyer), class: 'btn btn-sm btn-warning' %>
+              <%= link_to 'Delete', admin_buyer_path(buyer), 
+                class: 'btn btn-sm btn-danger',
+                data: { turbo_method: :delete, turbo_confirm: 'Are you sure you want to delete this buyer?' } 
               %>
             </td>
           </tr>
@@ -64,7 +62,7 @@
 </div>
 
 <h3>Feature Usage by Buyers</h3>
-<table class="table table-striped">
+<table class='table table-striped'>
   <thead>
     <tr>
       <th>Buyer</th>
@@ -75,13 +73,13 @@
     </tr>
   </thead>
   <tbody>
-    <% Usage.includes(:buyer, :feature, :subscription).each do |usage| %>
+    <% Usage.includes(:buyer, :feature, subscription: :plan).each do |usage| %>
       <tr>
         <td><%= usage.buyer.name %></td>
         <td><%= usage.subscription.plan.name %></td>
         <td><%= usage.feature.name %></td>
         <td><%= usage.units_used %></td>
-        <td><%= usage.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+        <td><%= usage.created_at.strftime('%Y-%m-%d %H:%M') %></td>
       </tr>
     <% end %>
   </tbody>

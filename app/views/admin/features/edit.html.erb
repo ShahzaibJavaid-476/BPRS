@@ -1,31 +1,31 @@
-<div class="container mt-5">
-  <div class="card shadow p-4">
-    <h2 class="text-center mb-4">Edit Feature</h2>
+<div class='container mt-5'>
+  <div class='card shadow p-4'>
+    <h2 class='text-center mb-4'>Edit Feature</h2>
 
-    <%= form_with model: @feature, url: admin_feature_path(@feature), method: :patch, local: true, class: "needs-validation" do |f| %>
-      <div class="mb-3">
-        <%= f.label :name, class: "form-label" %>
-        <%= f.text_field :name, class: "form-control", required: true %>
+    <%= form_with model: @feature, url: admin_feature_path(@feature), method: :patch, local: true, class: 'needs-validation' do |f| %>
+      <div class='mb-3'>
+        <%= f.label :name, class: 'form-label' %>
+        <%= f.text_field :name, class: 'form-control', required: true %>
       </div>
 
-      <div class="mb-3">
-        <%= f.label :code, class: "form-label" %>
-        <%= f.text_field :code, class: "form-control", required: true %>
+      <div class='mb-3'>
+        <%= f.label :code, class: 'form-label' %>
+        <%= f.text_field :code, class: 'form-control', required: true %>
       </div>
 
-      <div class="mb-3">
-        <%= f.label :unit_price, class: "form-label" %>
-        <%= f.number_field :unit_price, step: "0.01", class: "form-control", required: true %>
+      <div class='mb-3'>
+        <%= f.label :unit_price, class: 'form-label' %>
+        <%= f.number_field :unit_price, step: '0.01', class: 'form-control', required: true %>
       </div>
 
-      <div class="mb-3">
-        <%= f.label :max_unit_limit, "Max Unit Limit", class: "form-label" %>
-        <%= f.number_field :max_unit_limit, class: "form-control", required: true %>
+      <div class='mb-3'>
+        <%= f.label :max_unit_limit, 'Max Unit Limit', class: 'form-label' %>
+        <%= f.number_field :max_unit_limit, class: 'form-control', required: true %>
       </div>
 
-      <div class="d-flex justify-content-between">
-        <%= link_to "Cancel", admin_features_path, class: "btn btn-secondary" %>
-        <%= f.submit "Update Feature", class: "btn btn-primary" %>
+      <div class='d-flex justify-content-between'>
+        <%= link_to 'Cancel', admin_features_path, class: 'btn btn-secondary' %>
+        <%= f.submit 'Update Feature', class: 'btn btn-primary' %>
       </div>
     <% end %>
   </div>
