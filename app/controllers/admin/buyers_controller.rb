@@ -48,5 +48,4 @@ class Admin::BuyersController < AdminController
     params.require(:user).permit(:name, :email, :password)
   end
 end
-
   
