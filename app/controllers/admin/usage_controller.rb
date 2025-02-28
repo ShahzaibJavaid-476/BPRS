@@ -4,4 +4,3 @@ class Admin::UsageController < AdminController
     @usages = Usage.includes(:buyer, :feature, :subscription).all
   end
 end
-

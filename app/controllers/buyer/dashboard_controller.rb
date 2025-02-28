@@ -4,3 +4,4 @@ class Buyer::DashboardController < BuyerController
     @plans = Plan.includes(:features)
   end    
 end
+

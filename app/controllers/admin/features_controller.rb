@@ -49,4 +49,3 @@ class Admin::FeaturesController < AdminController
     @plans = Plan.all
   end       
 end
-

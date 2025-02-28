@@ -4,4 +4,3 @@ class Admin::PaymentsController < AdminController
     @payments = Payment.includes(:buyer, :plan).order(created_at: :desc)
   end
 end
-

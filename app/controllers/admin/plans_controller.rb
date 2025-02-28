@@ -46,12 +46,12 @@ class Admin::PlansController < AdminController
   def set_plan
     @plan = Plan.find(params[:id])
   end
+
   def plan_params
     params.require(:plan).permit(:name, feature_ids: [])
   end
-
+  
   def calculate_monthly_fee
     Feature.where(id: feature_ids).sum(:unit_price)
   end
 end
-

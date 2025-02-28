@@ -4,4 +4,3 @@ class Admin::DashboardController < AdminController
     @buyers = User.buyer
   end
 end
-

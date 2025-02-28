@@ -34,8 +34,7 @@ class Admin::BuyersController < AdminController
   end
 
   def destroy
-    @buyer = User.find(params[:id])
-    
+    @buyer = User.find(params[:id])    
     if @buyer.destroy
       redirect_to admin_buyers_path, notice: 'Buyer was successfully deleted.'
     else
