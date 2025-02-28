@@ -1,16 +1,6 @@
-<h1>Add Buyer</h1>
-<%= form_with model: @buyer, url: admin_buyers_path do |f| %>
-  <p>
-    <%= f.label :name %>
-    <%= f.text_field :name %>
-  </p>
-  <p>
-    <%= f.label :email %>
-    <%= f.email_field :email %>
-  </p>
-  <p>
-    <%= f.label :password %>
-    <%= f.password_field :password %>
-  </p>
-  <%= f.submit "Create Buyer" %>
-<% end %>
+<%= render partial: 'form', locals: {
+  form_title: 'Add',
+  form_url: admin_buyers_path,
+  form_method: :post,
+  submit_button_text: 'Create Buyer'
+} %>
